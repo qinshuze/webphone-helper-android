@@ -4,7 +4,7 @@ import android.content.Context
 import com.google.gson.Gson
 import org.webrtc.AudioSource
 import org.webrtc.AudioTrack
-import org.webrtc.Camera1Enumerator
+import org.webrtc.Camera2Enumerator
 import org.webrtc.DefaultVideoDecoderFactory
 import org.webrtc.DefaultVideoEncoderFactory
 import org.webrtc.EglBase
@@ -12,7 +12,12 @@ import org.webrtc.IceCandidate
 import org.webrtc.MediaConstraints
 import org.webrtc.PeerConnection
 import org.webrtc.PeerConnection.IceServer
-import org.webrtc.PeerConnection.PeerConnectionState.*
+import org.webrtc.PeerConnection.PeerConnectionState.CLOSED
+import org.webrtc.PeerConnection.PeerConnectionState.CONNECTED
+import org.webrtc.PeerConnection.PeerConnectionState.CONNECTING
+import org.webrtc.PeerConnection.PeerConnectionState.DISCONNECTED
+import org.webrtc.PeerConnection.PeerConnectionState.FAILED
+import org.webrtc.PeerConnection.PeerConnectionState.NEW
 import org.webrtc.PeerConnectionFactory
 import org.webrtc.SessionDescription
 import org.webrtc.SurfaceTextureHelper
@@ -57,11 +62,11 @@ class SignalingMessageHandler(private val client: Client, private val context: C
 
     /** 获取视频捕获器 **/
     private fun getVideoCapturer(): VideoCapturer {
-        val cameraEnumerator = Camera1Enumerator(false)
+        val cameraEnumerator = Camera2Enumerator(context)
         val deviceNames = cameraEnumerator.deviceNames
 
         // Choose the front camera
-        val frontCameraDeviceName = deviceNames.find { cameraEnumerator.isFrontFacing(it) }
+        val frontCameraDeviceName = deviceNames.find { cameraEnumerator.isBackFacing(it) }
         return cameraEnumerator.createCapturer(frontCameraDeviceName, null)
     }
 
